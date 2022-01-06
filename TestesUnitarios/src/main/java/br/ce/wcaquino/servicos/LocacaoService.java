@@ -1,20 +1,22 @@
 package br.ce.wcaquino.servicos;
 
-import static br.ce.wcaquino.utils.DataUtils.adicionarDias; 
+import static br.ce.wcaquino.utils.DataUtils.adicionarDias;
 
 import java.util.Date;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 import br.ce.wcaquino.entidades.Filme;
 import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
-import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoService {
 	
-	public Locacao alugarFilme(Usuario usuario, Filme filme) {
+	
+	public Locacao alugarFilme(Usuario usuario, Filme filme) throws Exception {
+		
+		if(filme.getEstoque() == 0 ) {
+			throw new Exception("Filme sem estoque");
+		}
+		
 		Locacao locacao = new Locacao();
 		locacao.setFilme(filme);
 		locacao.setUsuario(usuario);
@@ -32,21 +34,4 @@ public class LocacaoService {
 		return locacao;
 	}
 
-	@Test
-	public void teste() {
-		
-		// cenario 
-		LocacaoService service = new LocacaoService();
-		Usuario usuario = new Usuario();
-		Filme filme = new Filme("filme1",2,5.0);
-		
-		// acao
-		Locacao x = service.alugarFilme(usuario, filme);
-		
-		// verificacao
-		Assert.assertTrue(x.getValor() == 5.0);
-		Assert.assertTrue(DataUtils.isMesmaData(x.getDataLocacao(), new Date()));
-		Assert.assertTrue(DataUtils.isMesmaData(x.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)));
-		
-	}
 }
