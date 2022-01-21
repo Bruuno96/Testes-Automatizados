@@ -10,7 +10,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -43,7 +45,8 @@ public class LocacaoServiceTest {
 
 	@Test
 	public void deveAlugarFilme() throws Exception {
-		
+		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
+
 		// cenario 
 		Usuario usuario = new Usuario();
 		Filme filme = new Filme("filme1",2,5.0);
@@ -53,7 +56,6 @@ public class LocacaoServiceTest {
 		Locacao x = service.alugarFilme(usuario, filmes);
 		
 		// verificacao
-//		errorCollector.checkThat(x.getValor(), is(equalTo(5.0)));
 		errorCollector.checkThat(DataUtils.isMesmaData(x.getDataLocacao(), new Date()), is(true));
 		errorCollector.checkThat(DataUtils.isMesmaData(x.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)),is(true));
 		
@@ -215,8 +217,10 @@ public class LocacaoServiceTest {
 		assertThat(resultado.getValor(), is(14.0));
 	}
 	
+	@Ignore
 	@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
+		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		
 		// cenario
 		Usuario usuario = new Usuario("Usuario 1");
