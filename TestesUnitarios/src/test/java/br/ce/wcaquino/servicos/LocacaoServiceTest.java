@@ -1,6 +1,7 @@
 package br.ce.wcaquino.servicos;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -22,6 +22,7 @@ import br.ce.wcaquino.entidades.Locacao;
 import br.ce.wcaquino.entidades.Usuario;
 import br.ce.wcaquino.entidades.exceptions.FilmeSemEstoqueException;
 import br.ce.wcaquino.entidades.exceptions.LocadoraException;
+import br.ce.wcaquino.matchers.MatchersProprio;
 import br.ce.wcaquino.utils.DataUtils;
 
 public class LocacaoServiceTest {
@@ -57,6 +58,9 @@ public class LocacaoServiceTest {
 		// verificacao
 		errorCollector.checkThat(DataUtils.isMesmaData(x.getDataLocacao(), new Date()), is(true));
 		errorCollector.checkThat(DataUtils.isMesmaData(x.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)),is(true));
+		
+		errorCollector.checkThat(x.getDataRetorno(), MatchersProprio.ehHoejeComDiferencaDias(1));
+		errorCollector.checkThat(x.getDataLocacao(), MatchersProprio.ehHoeje());
 		
 	}
 	
@@ -143,7 +147,6 @@ public class LocacaoServiceTest {
 	}
 	
 	
-	@Ignore
 	@Test
 	public void naoDeveDevolverFilmeNoDomingo() throws FilmeSemEstoqueException, LocadoraException {
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
@@ -159,8 +162,7 @@ public class LocacaoServiceTest {
 		Locacao resultado = service.alugarFilme(usuario, filmes);
 		
 		//verificacao
-		boolean ehSegunda = DataUtils.verificarDiaSemana(resultado.getDataRetorno(),Calendar.MONDAY);
-		Assert.assertTrue(ehSegunda);
+		assertThat(resultado.getDataRetorno(), MatchersProprio.caiNumaSegunda());
 		
 	}
 	
